@@ -12,12 +12,26 @@ public class Collectable : MonoBehaviour
     bool disabledPhysics = false;
     float originalY = 0;
 
+    AudioSource audioSource;
+    bool canBePicked = true;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Player>() != null)
+        if (canBePicked && other.gameObject.GetComponent<Player>() != null)
         {
+            canBePicked = false;
+            audioSource?.Play();
             GameManager.instance.HandleCollect();
-            Destroy(gameObject);
+
+            Destroy(GetComponentInChildren<Renderer>());
+            Destroy(GetComponent<Rigidbody>());
+
+            Destroy(gameObject, 1f);
         }
     }
 
