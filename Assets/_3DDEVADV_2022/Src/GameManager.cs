@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public event System.Action<int> OnScoreUpdate;
+    public event System.Action OnGameWon;
 
     public static GameManager instance;
 
     [SerializeField] Collectable collectablePrefab;
+    [SerializeField] int requiredWinAmount = 3;
+
     int score = 0;
 
     private void Awake()
@@ -33,7 +37,23 @@ public class GameManager : MonoBehaviour
         SpawnCollectable();
         score += 1;
         OnScoreUpdate?.Invoke(score);
+
+        if (score >= requiredWinAmount) WinGame();
+
         Debug.Log($"Collected thingie score: {score}");
+    }
+
+    void WinGame()
+    {
+        Debug.Log($"Game Won");
+        OnGameWon?.Invoke();
+        StartCoroutine(RestartGameRoutine());
+    }
+
+    IEnumerator RestartGameRoutine()
+    {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void SpawnCollectable()
