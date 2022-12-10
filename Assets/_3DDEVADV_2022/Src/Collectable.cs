@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
+    [SerializeField] float rotationSpeed = 2;
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent<Player>() != null)
@@ -11,5 +13,10 @@ public class Collectable : MonoBehaviour
             GameManager.instance.HandleCollect();
             Destroy(gameObject);
         }
+    }
+
+    private void Update()
+    {
+        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime); 
     }
 }
